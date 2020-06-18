@@ -1,0 +1,227 @@
+{% extends 'admin/base.html' %}
+{% block content %}
+
+<!-- Continuous Device Table -->
+<div class="card shadow mb-4 col-10">
+  <div class="card-header py-3">
+    <h6 class="m-0 font-weight-bold text-primary">Continuous Devices/Sensors</h6>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-bordered" id="contTable" width="100%" cellspacing="0">
+        <thead>
+          <tr>
+            <th style="width:5%" class="text-center">Id</th>
+            <th style="width:15%">Name</th>
+            <th style="width:9%">Equip Id</th>
+            <th style="width:8%" class="text-center">Max</th>
+            <th style="width:8%" class="text-center">Min</th>
+            <th style="width:9%" class="text-center">Distribution</th>
+            <th style="width:9%" class="text-center">+Param1+</th>
+            <th style="width:9%" class="text-center">+Param2+</th>
+            <th style="width:9%" class="text-center">-Param1-</th>
+            <th style="width:9%" class="text-center">-Param2-</th>
+            <th style="width:10%"></th>
+          </tr>
+        </thead>
+        <tfoot>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td style="width:10%" class="text-center">
+              <a href="#" title="Add Continuous Device" data-toggle="modal" data-target="#contModal">
+                <i class="material-icons" style="color:blue">&#xE147;</i>
+              </a>
+            </td>
+          </tr>
+        </tfoot>
+        <tbody>
+          {% for c in contdevices %}
+          <tr>
+            <td style="width:5%" class="text-center">{{ c.cid }}</td>
+            <td style="width:15%">{{ c.name }}</td>
+            <td style="width:9%">{{ c.eid }}</td>
+            <td style="width:8%" class="text-center">{{ c.cmax }}</td>
+            <td style="width:8%" class="text-center">{{ c.cmin }}</td>
+            <td style="width:9%" class="text-center">{{ c.distribution }}</td>
+            <td style="width:9%" class="text-center">{{ c.posparam1 }}</td>
+            <td style="width:9%" class="text-center">{{ c.posparam2 }}</td>
+            <td style="width:9%" class="text-center">{{ c.negparam1 }}</td>
+            <td style="width:9%" class="text-center">{{ c.negparam2 }}</td>
+            <td style="width:10%" class="text-center">
+              <a href="#" class="edit-cont" title="Edit" data-toggle="modal" data-target="#contModal"
+                data-cid='{{ c.cid }}' data-name='{{ c.name}}' data-eid='{{ c.eid }}' data-cmax='{{ c.cmax }}'
+                data-cmin='{{ c.cmin }}' data-distribution='{{ c.distribution }}' data-posparam1='{{ c.posparam1 }}'
+                data-posparam2='{{ c.posparam2 }}' data-negparam1='{{ c.negparam1 }}'
+                data-negparam2='{{ c.negparam2 }}'>
+                <i class="material-icons" style="color:darkcyan">&#xE254;</i>
+              </a>
+              <a href="#" class="delete-cont" title="Delete" data-toggle="modal" data-target="#deleteContModal"
+                data-ccid='{{ c.cid }}'>
+                <i class="material-icons" style="color:firebrick">&#xE872;</i>
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Add Continuous Device Modal -->
+<div class="modal fade" id="contModal" tabindex="-1" role="dialog" aria-labelledby="phraseModalCenterTitle"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <form class="user" method="POST">
+        {{ continuousForm.csrf_token }}
+        <div class="form-group">
+          <div class="modal-header">
+            <h5 class="modal-title" id="phraseModalLongTitle">Enter Continuous Device Information:</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="cid" class="col-form-label">Id:</label>
+              {{ continuousForm.cid(class_ = 'form-control form-control-user', placeholder='id', id='cid') }}
+            </div>
+            <div class="form-group">
+              <label for="cname" class="col-form-label">Name:</label>
+              {{ continuousForm.name(class_ = 'form-control form-control-user', placeholder='name', id='cname') }}
+            </div>
+            <div class="form-group">
+              <label for="eid" class="col-form-label">Equipment Id:</label>
+              {{ continuousForm.eid(class_ = 'form-control form-control-user', placeholder='Equipment Id', id='eid') }}
+            </div>
+            <div class="form-group">
+              <label for="cmax" class="col-form-label">Max Value:</label>
+              {{ continuousForm.cmax(class_ = 'form-control form-control-user', placeholder='Max Value', id='cmax') }}
+            </div>
+            <div class="form-group">
+              <label for="cmin" class="col-form-label">Min Value:</label>
+              {{ continuousForm.cmin(class_ = 'form-control form-control-user', placeholder='Min Value', id='cmin') }}
+            </div>
+            <div class="form-group">
+              <label for="distribution" class="col-form-label">Distribution:</label>
+              {{ continuousForm.distribution(class_ = 'form-control form-control-user', placeholder='Distribution', id='distribution') }}
+            </div>
+            <div class="form-group">
+              <label for="posparam1" class="col-form-label">+Param1+:</label>
+              {{ continuousForm.posparam1(class_ = 'form-control form-control-user', placeholder='+Param1+', id='posparam1') }}
+            </div>
+            <div class="form-group">
+              <label for="posparam2" class="col-form-label">+Param2+:</label>
+              {{ continuousForm.posparam2(class_ = 'form-control form-control-user', placeholder='+Param2+', id='posparam2') }}
+            </div>
+            <div class="form-group">
+              <label for="negparam1" class="col-form-label">-Param1-:</label>
+              {{ continuousForm.negparam1(class_ = 'form-control form-control-user', placeholder='-Param1-', id='negparam1') }}
+            </div>
+            <div class="form-group">
+              <label for="negparam2" class="col-form-label">-Param2-:</label>
+              {{ continuousForm.negparam2(class_ = 'form-control form-control-user', placeholder='-Param2-', id='negparam2') }}
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            {{ continuousForm.submit(class_ = 'btn btn-primary') }}
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Continuous Device Modal -->
+<div class="modal fade bd-example-modal-sm" id="deleteContModal" tabindex="-1" role="dialog"
+  aria-labelledby="phraseModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <form class="user" method="POST">
+        {{ deleteContinuous.csrf_token }}
+        <div class="form-group">
+          <div class="modal-header">
+            <h5 class="modal-title" id="phraseModalLongTitle">Delete Continuous Device:</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="ccid" class="col-form-label">Id:</label>
+              {{ deleteContinuous.cid(class_ = 'form-control form-control-user', placeholder='id', id='ccid') }}
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+              {{ deleteContinuous.delete(class_ = 'btn btn-primary') }}
+            </div>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap core JavaScript-->
+<script src="../static/vendor/jquery/jquery.min.js"></script>
+<script src="../static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+<!-- Core plugin JavaScript-->
+<script src="../static/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+<!-- Custom scripts for all pages-->
+<script src="../static/js/sb-admin-2.js"></script>
+
+<!-- Page level plugins -->
+<script src="../static/vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="../static/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+<!-- Page level custom scripts -->
+<script>
+  $(document).ready(function () {
+    $('#contTable').dataTable();
+  });
+
+  $('.edit-cont').click(function (e) {
+    e.preventDefault();
+    cid = $(this).attr('data-cid');
+    $('#cid').val(cid);
+    name = $(this).attr('data-name');
+    $('#cname').val(name);
+    eid = $(this).attr('data-eid');
+    $('#eid').val(eid);
+    cmax = $(this).attr('data-cmax');
+    $('#cmax').val(cmax);
+    cmin = $(this).attr('data-cmin');
+    $('#cmin').val(cmin);
+    distribution = $(this).attr('data-distribution');
+    $('#distribution').val(distribution);
+    posparam1 = $(this).attr('data-posparam1');
+    $('#posparam1').val(posparam1);
+    posparam2 = $(this).attr('data-posparam2');
+    $('#posparam2').val(posparam2);
+    negparam1 = $(this).attr('data-negparam1');
+    $('#negparam1').val(negparam1);
+    negparam2 = $(this).attr('data-negparam2');
+    $('#negparam2').val(negparam2);
+  });
+
+  $('.delete-cont').click(function (e) {
+    e.preventDefault();
+    ccid = $(this).attr('data-ccid');
+    $('#ccid').val(ccid);
+  });
+
+</script>
+
+{% endblock %}

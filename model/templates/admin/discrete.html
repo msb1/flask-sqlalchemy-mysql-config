@@ -1,0 +1,197 @@
+{% extends 'admin/base.html' %}
+{% block content %}
+
+<!-- Discrete Device Table -->
+<div class="card shadow mb-4 col-10">
+  <div class="card-header py-3">
+    <h6 class="m-0 font-weight-bold text-primary">Discrete Devices/Sensors</h6>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-bordered" id="discTable" width="100%" cellspacing="0">
+        <thead>
+          <tr>
+            <th style="width:5%" class="text-center">Id</th>
+            <th style="width:15%">Name</th>
+            <th style="width:10%">Equip Id</th>
+            <th style="width:10%">Num Levels</th>
+            <th style="width:20%">Levels</th>
+            <th style="width:15%">Pos Probs</th>
+            <th style="width:15%">Neg Probs</th>
+            <th style="width:10%"></th>
+          </tr>
+        </thead>
+        <tfoot>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td style="width:10%" class="text-center">
+              <a href="#" title="Add Discrete Device" data-toggle="modal" data-target="#discModal">
+                <i class="material-icons" style="color:blue">&#xE147;</i>
+              </a>
+            </td>
+          </tr>
+        </tfoot>
+        <tbody>
+          {% for d in discdevices %}
+          <tr>
+            <td style="width:5%" class="text-center">{{ d.dd }}</td>
+            <td style="width:15%">{{ d.name }}</td>
+            <td style="width:10%">{{ d.eid }}</td>
+            <td style="width:10%">{{ d.numlevels }}</td>
+            <td style="width:20%">{{ d.levels }}</td>
+            <td style="width:15%">{{ d.posprobs}}</td>
+            <td style="width:15%">{{ d.negprobs}}</td>
+            <td style="width:10%" class="text-center">
+              <a href="#" class="edit-disc" title="Edit" data-toggle="modal" data-target="#discModal"
+                data-dd='{{ d.dd }}' data-name='{{ d.name}}' data-eid='{{ d.eid }}' data-numlevels='{{ d.numlevels }}'
+                data-levels='{{ d.levels }}' data-posprobs='{{ d.posprobs }}' data-negprobs='{{ d.negprobs }}'>
+                <i class="material-icons" style="color:darkcyan">&#xE254;</i>
+              </a>
+              <a href="#" class="delete-disc" title="Delete" data-toggle="modal" data-target="#deleteDiscModal"
+                data-ddd='{{ d.dd }}'>
+                <i class="material-icons" style="color:firebrick">&#xE872;</i>
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Add Discrete Device Modal -->
+<div class="modal fade" id="discModal" tabindex="-1" role="dialog" aria-labelledby="phraseModalCenterTitle"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <form class="user" method="POST">
+        {{ discreteForm.csrf_token }}
+        <div class="form-group">
+          <div class="modal-header">
+            <h5 class="modal-title" id="phraseModalLongTitle">Enter Discrete Device Information:</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="dd" class="col-form-label">Id:</label>
+              {{ discreteForm.dd(class_ = 'form-control form-control-user', placeholder='id', id='dd') }}
+            </div>
+            <div class="form-group">
+              <label for="dname" class="col-form-label">Name:</label>
+              {{ discreteForm.name(class_ = 'form-control form-control-user', placeholder='name', id='dname') }}
+            </div>
+            <div class="form-group">
+              <label for="eid" class="col-form-label">Equipment Id:</label>
+              {{ discreteForm.eid(class_ = 'form-control form-control-user', placeholder='Equipment Id', id='eid') }}
+            </div>
+            <div class="form-group">
+              <label for="numlevels" class="col-form-label">Number Levels:</label>
+              {{ discreteForm.numlevels(class_ = 'form-control form-control-user', placeholder='Number Levels', id='numlevels') }}
+            </div>
+            <div class="form-group">
+              <label for="levels" class="col-form-label">Levels:</label>
+              {{ discreteForm.levels(class_ = 'form-control form-control-user', placeholder='Levels', id='levels') }}
+            </div>
+            <div class="form-group">
+              <label for="posprobs" class="col-form-label">Pos Probs:</label>
+              {{ discreteForm.posprobs(class_ = 'form-control form-control-user', placeholder='Pos Probs', id='posprobs') }}
+            </div>
+            <div class="form-group">
+              <label for="negprobs" class="col-form-label">Neg Probs:</label>
+              {{ discreteForm.negprobs(class_ = 'form-control form-control-user', placeholder='Neg Probs', id='negprobs') }}
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            {{ discreteForm.submit(class_ = 'btn btn-primary') }}
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Discrete Device Modal -->
+<div class="modal fade bd-example-modal-sm" id="deleteDiscModal" tabindex="-1" role="dialog"
+  aria-labelledby="phraseModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <form class="user" method="POST">
+        {{ deleteDiscrete.csrf_token }}
+        <div class="form-group">
+          <div class="modal-header">
+            <h5 class="modal-title" id="phraseModalLongTitle">Delete Continuous Device:</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="ddd" class="col-form-label">Id:</label>
+              {{ deleteDiscrete.dd(class_ = 'form-control form-control-user', placeholder='id', id='ddd') }}
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+              {{ deleteDiscrete.delete(class_ = 'btn btn-primary') }}
+            </div>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap core JavaScript-->
+<script src="../static/vendor/jquery/jquery.min.js"></script>
+<script src="../static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+<!-- Core plugin JavaScript-->
+<script src="../static/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+<!-- Custom scripts for all pages-->
+<script src="../static/js/sb-admin-2.js"></script>
+
+<!-- Page level plugins -->
+<script src="../static/vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="../static/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+<!-- Page level custom scripts -->
+<script>
+  $(document).ready(function () {
+    $('#discTable').dataTable();
+  });
+
+  $('.edit-disc').click(function (e) {
+    e.preventDefault();
+    dd = $(this).attr('data-dd');
+    $('#dd').val(dd);
+    name = $(this).attr('data-name');
+    $('#dname').val(name);
+    eid = $(this).attr('data-eid');
+    $('#eid').val(eid);
+    numlevels = $(this).attr('data-numlevels');
+    $('#numlevels').val(numlevels);
+    levels = $(this).attr('data-levels');
+    $('#levels').val(levels);
+    posprobs = $(this).attr('data-posprobs');
+    $('#posprobs').val(posprobs);
+    negprobs = $(this).attr('data-negprobs');
+    $('#negprobs').val(negprobs);
+  });
+
+  $('.delete-disc').click(function (e) {
+    e.preventDefault();
+    ddd = $(this).attr('data-ddd');
+    $('#ddd').val(ddd);
+  });
+
+</script>
+
+{% endblock %}

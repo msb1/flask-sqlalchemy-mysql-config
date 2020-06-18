@@ -1,0 +1,223 @@
+{% extends 'admin/base.html' %}
+{% block content %}
+
+<!-- Equipment Table -->
+<div class="card shadow mb-4 col-10">
+  <div class="card-header py-3">
+    <h6 class="m-0 font-weight-bold text-primary">Equipment</h6>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-bordered" id="equipTable" width="100%" cellspacing="0">
+        <thead>
+          <tr>
+            <th style="width:5%" class="text-center">Id</th>
+            <th style="width:15%">Name</th>
+            <th style="width:10%">Line</th>
+            <th style="width:10%">Line Id</th>
+            <th style="width:10%">Type</th>
+            <th style="width:10%">File Name</th>
+            <th style="width:10%" class="text-center">Err Rate</th>
+            <th style="width:10%" class="text-center">Success</th>
+            <th style="width:10%" class="text-center">Simulate</th>
+            <th style="width:10%"></th>
+          </tr>
+        </thead>
+        <tfoot>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td style="width:10%" class="text-center">
+              <a href="#" title="Add Equipment" data-toggle="modal" data-target="#equipModal">
+                <i class="material-icons" style="color:blue">&#xE147;</i>
+              </a>
+            </td>
+          </tr>
+        </tfoot>
+        <tbody>
+          {% for e in equipment %}
+          <tr>
+            <td style="width:5%" class="text-center">{{ e.eid }}</td>
+            <td style="width:15%">{{ e.name }}</td>
+            <td style="width:10%">{{ e.line }}</td>
+            <td style="width:10%">{{ e.lineid }}</td>
+            <td style="width:10%">{{ e.etype }}</td>
+            <td style="width:10%">{{ e.filename }}</td>
+            <td style="width:10%" class="text-center">{{ e.errate }}</td>
+            <td style="width:10%" class="text-center">{{ e.success }}</td>
+            <td style="width:10%" class="text-center">
+              <input type="checkbox" {% if e.simulator %} checked {% endif %} disabled></input>
+            </td>
+            <td style="width:10%" class="text-center">
+              <a href="#" class="edit-equip" title="Edit" data-toggle="modal" data-target="#equipModal"
+                data-eid='{{ e.eid }}' data-name='{{ e.name}}' data-line='{{ e.line }}' data-lineid='{{ e.lineid }}'
+                data-etype='{{ e.etype }}' data-filename='{{ e.filename }}' data-simulator='{{ e.simulator }}'
+                data-errate='{{ e.errate }}' data-success='{{ e.success }}'>
+                <i class="material-icons" style="color:darkcyan">&#xE254;</i>
+              </a>
+              <a href="#" class="delete-equip" title="Delete" data-toggle="modal" data-target="#deleteEquipModal" data-eqid='{{ e.eid }}'>
+                <i class="material-icons" style="color:firebrick">&#xE872;</i>
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Add Equipment Modal -->
+<div class="modal fade" id="equipModal" tabindex="1" role="dialog" aria-labelledby="phraseModalCenterTitle"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <form class="user" method="POST">
+        {{ equipForm.csrf_token }}
+        <div class="form-group">
+          <div class="modal-header">
+            <h5 class="modal-title" id="phraseModalLongTitle">Enter Equipment Information:</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="eid" class="col-form-label">Id:</label>
+              {{ equipForm.eid(class_ = 'form-control form-control-user', placeholder='id', id='eid') }}
+            </div>
+            <div class="form-group">
+              <label for="ename" class="col-form-label">Name:</label>
+              {{ equipForm.name(class_ = 'form-control form-control-user', placeholder='name', id='ename') }}
+            </div>
+            <div class="form-group">
+              <label for="line" class="col-form-label">Line:</label>
+              {{ equipForm.line(class_ = 'form-control form-control-user', placeholder='line', id='line') }}
+            </div>
+            <div class="form-group">
+              <label for="lineid" class="col-form-label">Line Id:</label>
+              {{ equipForm.lineid(class_ = 'form-control form-control-user', placeholder='line id', id='lineid') }}
+            </div>
+            <div class="form-group">
+              <label for="etype" class="col-form-label">Type:</label>
+              {{ equipForm.etype(class_ = 'form-control form-control-user', placeholder='type', id='etype') }}
+            </div>
+            <div class="form-group">
+              <label for="filename" class="col-form-label">Type:</label>
+              {{ equipForm.filename(class_ = 'form-control form-control-user', placeholder='File Name', id='filename') }}
+            </div>
+            <div class="form-group">
+              <label for="errate" class="col-form-label">Err Rate:</label>
+              {{ equipForm.errate(class_ = 'form-control form-control-user', placeholder='Err Rate', id='errate') }}
+            </div>
+            <div class="form-group">
+              <label for="success" class="col-form-label">Success:</label>
+              {{ equipForm.success(class_ = 'form-control form-control-user', placeholder='Success', id='success') }}
+            </div>
+            <div class="form-group">
+              <label for="simulator" class="col-form-label">Simulator:</label>
+              {{ equipForm.simulator(class_ = 'form-control form-control-user', placeholder='Simulator', id='simulator') }}
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            {{ equipForm.generate(class_ = 'btn btn-info') }}
+            {{ equipForm.submit(class_ = 'btn btn-primary') }}
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Equipment Modal -->
+<div class="modal fade " id="deleteEquipModal" tabindex="-1" role="dialog"
+  aria-labelledby="phraseModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <form class="user" method="POST">
+        {{ deleteEquip.csrf_token }}
+        <div class="form-group">
+          <div class="modal-header">
+            <h5 class="modal-title" id="phraseModalLongTitle">Delete Equipment:</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="eqid" class="col-form-label">Id:</label>
+              {{ deleteEquip.eid(class_ = 'form-control form-control-user', placeholder='id', id='eqid') }}
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+              {{ deleteEquip.delete(class_ = 'btn btn-primary') }}
+            </div>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap core JavaScript-->
+<script src="../static/vendor/jquery/jquery.min.js"></script>
+<script src="../static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+<!-- Core plugin JavaScript-->
+<script src="../static/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+<!-- Custom scripts for all pages-->
+<script src="../static/js/sb-admin-2.js"></script>
+
+<!-- Page level plugins -->
+<script src="../static/vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="../static/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+<!-- Page level custom scripts -->
+<script>
+  $(document).ready(function () {
+    $('#equipTable').dataTable();
+  });
+
+  $('.edit-equip').click(function (e) {
+    e.preventDefault();
+    eid = $(this).attr('data-eid');
+    $('#eid').val(eid);
+    name = $(this).attr('data-name');
+    $('#ename').val(name);
+    line = $(this).attr('data-line');
+    $('#line').val(line);
+    lineid = $(this).attr('data-lineid');
+    $('#lineid').val(lineid);
+    etype = $(this).attr('data-etype');
+    $('#etype').val(etype);
+    filename = $(this).attr('data-filename');
+    $('#filename').val(filename);
+    errate = $(this).attr('data-errate');
+    $('#errate').val(errate);
+    success = $(this).attr('data-success');
+    $('#success').val(success);
+    simulator = $(this).attr('data-simulator');
+    if (simulator === "True") {
+      $('#simulator').prop("checked", true);
+    } else {
+      $('#simulator').prop("checked", false);
+    }
+  });
+
+  $('.delete-equip').click(function (e) {
+    e.preventDefault();
+    eqid = $(this).attr('data-eqid');
+    $('#eqid').val(eqid);
+  });
+
+
+</script>
+{% endblock %}

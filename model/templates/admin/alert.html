@@ -1,0 +1,205 @@
+{% extends 'admin/base.html' %}
+{% block content %}
+
+<!-- Alert Table -->
+<div class="card shadow mb-4 col-10">
+  <div class="card-header py-3">
+    <h6 class="m-0 font-weight-bold text-primary">Alerts</h6>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-bordered" id="alertTable" width="100%" cellspacing="0">
+        <thead>
+          <tr>
+            <th style="width:5%" class="text-center">Id</th>
+            <th style="width:25%">Name</th>
+            <th style="width:15%">Equip Id</th>
+            <th style="width:15%">Type</th>
+            <th style="width:10%" class="text-center">Warn Level</th>
+            <th style="width:10%" class="text-center">Alarm Level</th>
+            <th style="width:10%" class="text-center">Increasing</th>
+            <th style="width:10%"></th>
+          </tr>
+        </thead>
+        <tfoot>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td style="width:10%" class="text-center">
+              <a href="#" title="Add Alert" data-toggle="modal" data-target="#alertModal">
+                <i class="material-icons" style="color:blue">&#xE147;</i>
+              </a>
+            </td>
+          </tr>
+        </tfoot>
+        <tbody>
+          {% for a in alerts %}
+          <tr>
+            <td style="width:5%" class="text-center">{{ a.aid }}</td>
+            <td style="width:25%">{{ a.name }}</td>
+            <td style="width:15%">{{ a.eid }}</td>
+            <td style="width:15%">{{ a.atype }}</td>
+            <td style="width:10%" class="text-center">{{ a.warnlevel }}</td>
+            <td style="width:10%" class="text-center">{{ a.alarmlevel }}</td>
+            <td style="width:10%" class="text-center">
+              <input type="checkbox" {% if a.increasing %} checked {% endif %} disabled></input>
+            </td>
+            <td style="width:10%" class="text-center">
+              <a href="#" class="edit-alert" title="Edit" data-toggle="modal" data-target="#alertModal"
+                data-aid='{{ a.aid }}' data-name='{{ a.name}}' data-eid='{{ a.eid }}' data-atype='{{ a.atype }}'
+                data-warnlevel='{{ a.warnlevel }}' data-alarmlevel='{{ a.alarmlevel }}'
+                data-increasing='{{ a.increasing }}'>
+                <i class="material-icons" style="color:darkcyan">&#xE254;</i>
+              </a>
+              <a href="#" class="delete-alert" title="Delete" data-toggle="modal" data-target="#deleteAlertModal"
+                data-aaid='{{ a.aid }}'>
+                <i class="material-icons" style="color:firebrick">&#xE872;</i>
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Add Alert Modal -->
+<div class="modal fade" id="alertModal" tabindex="-1" role="dialog" aria-labelledby="phraseModalCenterTitle"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <form class="user" method="POST">
+        {{ alertForm.csrf_token }}
+        <div class="form-group">
+          <div class="modal-header">
+            <h5 class="modal-title" id="phraseModalLongTitle">Enter Alert Information:</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="aid" class="col-form-label">Id:</label>
+              {{ alertForm.aid(class_ = 'form-control form-control-user', placeholder='id', id='aid') }}
+            </div>
+            <div class="form-group">
+              <label for="aname" class="col-form-label">Name:</label>
+              {{ alertForm.name(class_ = 'form-control form-control-user', placeholder='name', id='aname') }}
+            </div>
+            <div class="form-group">
+              <label for="eid" class="col-form-label">Equipment Id:</label>
+              {{ alertForm.eid(class_ = 'form-control form-control-user', placeholder='Equipment Id', id='eid') }}
+            </div>
+            <div class="form-group">
+              <label for="atype" class="col-form-label">Alert Type:</label>
+              {{ alertForm.atype(class_ = 'form-control form-control-user', placeholder='Alert Type', id='atype') }}
+            </div>
+            <div class="form-group">
+              <label for="warnlevel" class="col-form-label">Warn Level:</label>
+              {{ alertForm.warnlevel(class_ = 'form-control form-control-user', placeholder='Warn Level', id='warnlevel') }}
+            </div>
+            <div class="form-group">
+              <label for="alarmlevel" class="col-form-label">Alarm Level:</label>
+              {{ alertForm.alarmlevel(class_ = 'form-control form-control-user', placeholder='Alarm Level', id='alarmlevel') }}
+            </div>
+            <div class="form-group">
+              <label for="increasing" class="col-form-label">Increasing:</label>
+              {{ alertForm.increasing(class_ = 'form-control form-control-user', placeholder='Increasing', id='increasing') }}
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            {{ alertForm.submit(class_ = 'btn btn-primary') }}
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Alert Modal -->
+<div class="modal fade bd-example-modal-sm" id="deleteAlertModal" tabindex="-1" role="dialog"
+  aria-labelledby="phraseModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <form class="user" method="POST">
+        {{ deleteAlert.csrf_token }}
+        <div class="form-group">
+          <div class="modal-header">
+            <h5 class="modal-title" id="phraseModalLongTitle">Delete Continuous Device:</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="aaid" class="col-form-label">Id:</label>
+              {{ deleteAlert.aid(class_ = 'form-control form-control-user', placeholder='id', id='aaid') }}
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+              {{ deleteAlert.delete(class_ = 'btn btn-primary') }}
+            </div>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap core JavaScript-->
+<script src="../static/vendor/jquery/jquery.min.js"></script>
+<script src="../static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+<!-- Core plugin JavaScript-->
+<script src="../static/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+<!-- Custom scripts for all pages-->
+<script src="../static/js/sb-admin-2.js"></script>
+
+<!-- Page level plugins -->
+<script src="../static/vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="../static/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+<!-- Page level custom scripts -->
+<script>
+  $(document).ready(function () {
+    $('#alertTable').dataTable();
+  });
+
+  $('.edit-alert').click(function (e) {
+    e.preventDefault();
+    aid = $(this).attr('data-aid');
+    $('#aid').val(aid);
+    name = $(this).attr('data-name');
+    $('#aname').val(name);
+    eid = $(this).attr('data-eid');
+    $('#eid').val(eid);
+    atype = $(this).attr('data-atype');
+    $('#atype').val(atype);
+    warnlevel = $(this).attr('data-warnlevel');
+    $('#warnlevel').val(warnlevel);
+    alarmlevel = $(this).attr('data-alarmlevel');
+    $('#alarmlevel').val(alarmlevel);
+    increasing = $(this).attr('data-increasing');
+    if (increasing === "True") {
+      $('#increasing').prop("checked", true);
+    } else {
+      $('#increasing').prop("checked", false);
+    }
+  });
+
+  $('.delete-alert').click(function (e) {
+    e.preventDefault();
+    aaid = $(this).attr('data-aaid');
+    $('#aaid').val(aaid);
+  });
+
+</script>
+
+{% endblock %}
